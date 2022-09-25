@@ -11,6 +11,7 @@ app=tk.Tk()
 app.geometry('1025x500')
 app.minsize(1025,500)#minimum window size
 app.configure(background='#272727')
+app.title('STUDENT MANAGEMENT SYSTEM')
 app.state('zoomed')#maximizing the window to screen size
 
 

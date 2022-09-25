@@ -1,0 +1,11 @@
+Install the font 'game_of_squids' in the zip file 
+Run the main.py file 
+
+To UPDATE/DELETE:
+    Double clink the user you want to delete in the view
+
+To Generate Certificates:
+    press the generate button 
+    check 'generated-certificate-data' folder to view 
+
+please check 'behind_the_scenes' folder too
