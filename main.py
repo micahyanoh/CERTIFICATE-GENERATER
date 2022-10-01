@@ -22,7 +22,7 @@ Frame(w, width=427, height=250, background='#272727').place(x=0,y=0)
 label1=Label(w, text='A.M YANO ESQ*', fg='white', background='#272727') #decorate it 
 label1.configure(font=("Game Of Squids", 20, "bold"))   #You need to install this font in your PC or try another one
 label1.place(x=80,y=90)
-label2=Label(w, text='powered by MIEYAN', fg='#0F9D58', bg='#272727') #decorate it 
+label2=Label(w, text='powered by MIEYAN0', fg='#0F9D58', bg='#272727') #decorate it 
 label2.configure(font=("Game Of Squids", 10))
 label2.place(x=100,y=180)
 
