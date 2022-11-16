@@ -315,6 +315,7 @@ def generate_cert():
         cv2.imwrite(f'generated-certificate-data/{file_n}.jpg',template)        
     connection.cursor.close()
     connection.conn.close()
+    messagebox.showinfo("","    Certificates Successfully Generated    ")
     
     
     

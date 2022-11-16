@@ -8,4 +8,8 @@ To Generate Certificates:
     press the generate button 
     check 'generated-certificate-data' folder to view 
 
+Login Credentials 
+        USER NAME: alfyano 
+        PASSWORD: password
+
 please check 'behind_the_scenes' folder too

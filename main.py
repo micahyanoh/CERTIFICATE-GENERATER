@@ -73,8 +73,5 @@ for i in range(5): #5loops
 w.destroy()
 
 """CALLING INITIALIZING FUNCTIONS"""
-import front
-front.sqlite.create_student()
-front.populate_view()
-front.app.mainloop()
+import log_in
 w.mainloop()
