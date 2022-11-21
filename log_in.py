@@ -209,5 +209,3 @@ def signup():
     b2.place(x=210,y=250+63)
 
 signin() #default screen
-
-w.mainloop()
