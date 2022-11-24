@@ -194,6 +194,7 @@ def signup():
             w=file.write(str(r))
              
             messagebox.showinfo("","     successfully signed up     ")
+            signin()
             
         else:
             messagebox.showwarning('try again', 'password should match ')

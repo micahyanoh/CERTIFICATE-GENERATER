@@ -1,1 +1,1 @@
-{'alfyano': 'password'}
+{'alfyano': 'password', 'plp': '1234', 'kamau': '788', 'jeff': 'rfk'}
