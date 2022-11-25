@@ -2,6 +2,7 @@
 import tkinter as tk
 from tkinter import END, ttk,messagebox
 import connection
+from PIL import Image
 import sqlite
 import cv2
 
@@ -313,7 +314,10 @@ def generate_cert():
         template=cv2.imread('certificate-template.jpg')
         cv2.putText(template,names,(1201,953),cv2.FONT_HERSHEY_SIMPLEX,4,(233, 34, 103),4,cv2.LINE_AA)
         cv2.putText(template,cert_no,(2697  ,2409),cv2.FONT_HERSHEY_SIMPLEX,3,(255,255,255),4,cv2.LINE_AA)      
-        cv2.imwrite(f'generated-certificate-data/{file_n}.jpg',template)        
+        cv2.imwrite(f'generated-certificate-data/images/{file_n}.jpg',template)
+        image=Image.open(f'generated-certificate-data/images/{file_n}.jpg')
+        cert_p=image.convert('RGB')
+        cert_p.save(f'generated-certificate-data/pdf/{file_n}.pdf')
     connection.cursor.close()
     connection.conn.close()
     messagebox.showinfo("","    Certificates Successfully Generated    ")
