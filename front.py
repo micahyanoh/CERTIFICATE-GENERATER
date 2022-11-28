@@ -114,7 +114,7 @@ e5.grid(row=5,column=1,padx=20,pady=5)
 #buttons frame one
 b1=tk.Button(
     first_frame,
-    text='SUBMIT',
+    text='ADD',
     width=10,
     background='#DB4437'
     )

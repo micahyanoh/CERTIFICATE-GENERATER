@@ -4,6 +4,8 @@ from tkinter import font
 from PIL import ImageTk, Image 
 import time
 import folder
+
+
 def splashscrn():
     w=Tk()
 
@@ -71,8 +73,16 @@ def splashscrn():
     folder.create_folders()
 
     w.destroy()
-splashscrn()
+    """CALLING INITIALIZING FUNCTIONS"""
+    import log_in
+    log_in.w.mainloop()
+    
+    
+def main():
+    splashscrn()
+    
+if __name__ == '__main__':
+    main()
+    
 
-"""CALLING INITIALIZING FUNCTIONS"""
-import log_in
-log_in.w.mainloop()
+
