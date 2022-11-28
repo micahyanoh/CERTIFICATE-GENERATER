@@ -15,6 +15,7 @@ def create_student():
         conn.commit()
     except :
         pass
+    #cur.execute("INSERT INTO students VALUES('Alfonce','Micah Yano','ogongoyanojnr@gmail.com')")
 create_student()
 #cur.execute("INSERT INTO students VALUES('Alfonce','Micah Yano','ogongoyanojnr@gmail.com')")
 

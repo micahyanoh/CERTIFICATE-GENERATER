@@ -1,8 +1,9 @@
 """ IMPORTING APPLICATION DEPENDANCIES"""
 import tkinter as tk
 from tkinter import END, ttk,messagebox
-import connection
+from pdf_mail import sendpdf
 from PIL import Image
+import connection
 import sqlite
 import cv2
 
@@ -320,7 +321,28 @@ def generate_cert():
         cert_p.save(f'generated-certificate-data/pdf/{file_n}.pdf')
     connection.cursor.close()
     connection.conn.close()
+  
     messagebox.showinfo("","    Certificates Successfully Generated    ")
+#EMAILING CERTIFICATES TO STUDENTS
+def send_cert():
+    sender=input()
+    receiver=input()
+    email_password=input()
+    subject=input()
+    body=input()
+    filename=input()
+    file_location=input()
+    message=sendpdf(
+        sender,
+        receiver,
+        email_password,
+        subject,
+        body,
+        filename,
+        file_location
+    )
+    
+    
     
     
     
