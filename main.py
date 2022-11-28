@@ -33,8 +33,8 @@ def splashscrn():
 
     #making animation
 
-    image_a=ImageTk.PhotoImage(Image.open('c2.png'))
-    image_b=ImageTk.PhotoImage(Image.open('c1.png'))
+    image_a=ImageTk.PhotoImage(Image.open('assets/c2.png'))
+    image_b=ImageTk.PhotoImage(Image.open('assets/c1.png'))
 
 
 

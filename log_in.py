@@ -26,7 +26,7 @@ def signin():
     f1.place(x=480,y=100)
     
     global img1
-    img1 = ImageTk.PhotoImage(Image.open("signin.png"))
+    img1 = ImageTk.PhotoImage(Image.open("assets/signin.png"))
     Label(signin_win,image=img1,border=0,bg='white').place(x=50,y=50)
 
     l2=Label(signin_win,text="Sign in",fg='#0F9D58',bg='white')
@@ -111,7 +111,7 @@ def signup():
 
     
     global img2
-    img2 = ImageTk.PhotoImage(Image.open("signup.png"))
+    img2 = ImageTk.PhotoImage(Image.open("assets/signup.png"))
     Label(signup_win,image=img2,border=0,bg='white').place(x=30,y=90)
 
     l2=Label(signup_win,text="Sign up",fg='#0F9D58',bg='white')

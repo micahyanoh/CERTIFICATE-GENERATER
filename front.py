@@ -312,7 +312,7 @@ def generate_cert():
         file_n=(data[3])
         names=(data[1]+space+data[2])
         cert_no=f'A1l200{cert_num}'
-        template=cv2.imread('certificate-template.jpg')
+        template=cv2.imread('assets/certificate-template.jpg')
         cv2.putText(template,names,(1201,953),cv2.FONT_HERSHEY_SIMPLEX,4,(233, 34, 103),4,cv2.LINE_AA)
         cv2.putText(template,cert_no,(2697  ,2409),cv2.FONT_HERSHEY_SIMPLEX,3,(255,255,255),4,cv2.LINE_AA)      
         cv2.imwrite(f'generated-certificate-data/images/{file_n}.jpg',template)
