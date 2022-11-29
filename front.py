@@ -12,7 +12,8 @@ import cv2
 app=tk.Tk()
 app.geometry('1025x500')
 app.minsize(1025,500)#minimum window size
-app.configure(background='#2f935a')
+cl='#40E0D0'
+app.configure(background=cl)#'#2f935a')
 #app.configure(background= 'white')
 app.title('STUDENT MANAGEMENT SYSTEM')
 app.state('zoomed')#maximizing the window to screen size
@@ -26,7 +27,7 @@ def printer():
 '''frame one'''
 first_frame=tk.LabelFrame(
     app,
-    background='#2f935a',
+    background=cl,
     text='STUDENT DATA ENTRY FORM',
     width='330',
     height='480'
@@ -41,19 +42,19 @@ first_frame.pack(
 #creating labels and entries in frame one
 empty_label_a=tk.Label(
     first_frame,
-    background='#2f935a',
+    background=cl,
     text=None
     ).grid(column=1,row=0,pady=10)
 empty_label_b=tk.Label(
     first_frame,
-    background='#2f935a',
+    background=cl,
     text=None
     ).grid(column=1,row=6,pady=15)
 
 l1=tk.Label(
     first_frame,
     text='ADM NUMBER',
-    background='#2f935a'
+    background=cl#'#2f935a'
     )
 l1.grid(row=1,column=0,padx=10,pady=5)
 
@@ -65,7 +66,7 @@ e1.grid(row=1,column=1,padx=20,pady=5)
 l2=tk.Label(
     first_frame,
     text='FIRST NAME',
-    background='#2f935a',
+    background=cl#'#2f935a',
     )
 l2.grid(row=2,column=0,padx=10,pady=5)
 
@@ -77,7 +78,7 @@ e2.grid(row=2,column=1,padx=20,pady=5)
 l3=tk.Label(
     first_frame,
     text='LAST NAME',
-    background='#2f935a'
+    background=cl#'#2f935a'
     )
 l3.grid(row=3,column=0,padx=10,pady=5)
 
@@ -89,7 +90,7 @@ e3.grid(row=3,column=1,padx=20,pady=5)
 l4=tk.Label(
     first_frame,
     text='EMAIL',
-    background='#2f935a'
+    background=cl#'#2f935a'
     )
 l4.grid(row=4,column=0,padx=10,pady=5)
 
@@ -101,7 +102,7 @@ e4.grid(row=4,column=1,padx=20,pady=5)
 l5=tk.Label(
     first_frame,
     text='PHONE NUMBER',
-    background='#2f935a'
+    background=cl#'#2f935a'
     )
 l5.grid(row=5,column=0,padx=10,pady=5)
 
@@ -116,7 +117,7 @@ b1=tk.Button(
     first_frame,
     text='ADD',
     width=10,
-    background='#DB4437'
+    background='#D9D9D9'
     )
 b1.grid(column=0,row=9,padx=20,pady=20)
 
@@ -124,7 +125,7 @@ b2=tk.Button(
     first_frame,
     text='CLEAR',
     width=10,
-    background='#DB4437'
+    background='#D9D9D9'
     )
 b2.grid(column=1,row=9)
 
@@ -132,7 +133,7 @@ b3=tk.Button(
     first_frame,
     text='UPDATE',
     width=10,
-    background='#DB4437'
+    background='#D9D9D9'
     )
 b3.grid(column=0,row=10,padx=20,pady=10)
 
@@ -140,7 +141,7 @@ b4=tk.Button(
     first_frame,
     text='DELETE',
     width=10,
-    background='#DB4437'
+    background='#D9D9D9'
     )
 b4.grid(column=1,row=10)
 
@@ -152,7 +153,7 @@ search_b=tk.Button(
     first_frame,
     text='SEARCH',
     width=10,
-    background='#DB4437'
+    background='#D9D9D9'
     )
 search_b.grid(column=1,row=8)
 
@@ -160,7 +161,7 @@ search_lab=tk.Label(
     first_frame,
     text=' ADM SEARCH',
     width=10,
-    background='#2f935a'
+    background=cl#'#2f935a'
     )
 search_lab.grid(column=0,row=7)
 
@@ -168,7 +169,7 @@ cert_lab=tk.Label(
     first_frame,
     text='',
     width=10,
-    background='#2f935a'
+    background=cl#'#2f935a'
     )
 cert_lab.grid(column=0,row=11,pady=15)
 
@@ -176,7 +177,7 @@ cert_lab=tk.Label(
     first_frame,
     text='CERTIFICATES',
     width=10,
-    background='#2f935a'
+    background=cl#cl#'#2f935a'
     )
 cert_lab.grid(column=1,row=11,pady=15)
 
@@ -184,7 +185,7 @@ cert_b=tk.Button(
     first_frame,
     text='GENERATE',
     width=10,
-    background='#0F9D58'
+    background='#D9D9D9'
     )
 cert_b.grid(column=1,row=12)
 
@@ -192,7 +193,7 @@ home=tk.Button(
     first_frame,
     text='EXIT',
     width=10,
-    background='#0F9D58'
+    background='#D9D9D9'
     )
 home.grid(column=0,row=12)
 
@@ -203,7 +204,7 @@ second_frame=tk.LabelFrame(
     text='STUDENT  RECORDS',
     width='330',
     height='480',
-    background='#2f935a'
+    background=cl#'#2f935a'
     )
 second_frame.pack(side=tk.LEFT,fill=tk.BOTH,expand=1,pady=10)
 
