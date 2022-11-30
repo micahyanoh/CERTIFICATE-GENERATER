@@ -1,1 +1,1 @@
-{'alfyano': 'password', 'plp': '1234', 'kamau': '788', 'jeff': 'rfk', 'yan': '123', 'KenAmabani': '12345', 'kenambani': '12345'}
+{'alfyano': 'password', 'elijah odek': '35218874', 'plp': '123'}

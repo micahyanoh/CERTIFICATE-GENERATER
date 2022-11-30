@@ -4,7 +4,6 @@ from tkinter import END, ttk,messagebox
 from pdf_mail import sendpdf
 from PIL import Image
 import connection
-import sqlite
 import cv2
 
 
@@ -12,7 +11,13 @@ import cv2
 app=tk.Tk()
 app.geometry('1025x500')
 app.minsize(1025,500)#minimum window size
+#style=ttk.Style(app)
 cl='#40E0D0'
+#style.theme_use('clam')
+#style.configure('Treeview',font=('Verdana',10),cellpadding=19)
+#style.configure('Treeview.Heading',font=('Verdana',10,'bold'),cellpadding=19,background=cl)
+
+
 app.configure(background=cl)#'#2f935a')
 #app.configure(background= 'white')
 app.title('STUDENT MANAGEMENT SYSTEM')
@@ -217,9 +222,9 @@ scrollbar_y.pack(side=tk.RIGHT,fill=tk.Y)
 
 #testing function
 def enter_data():
-    adm=e1.get()
-    first=e2.get()
-    last=e3.get()
+    adm=e1.get().upper()
+    first=e2.get().upper()
+    last=e3.get().upper()
     email=e4.get()
     phone=e5.get()
 
@@ -240,7 +245,13 @@ trv=ttk.Treeview(
     xscrollcommand=scrollbar_x.set
     )
 style=ttk.Style(trv)
+style.theme_use('clam')
+style.configure('Treeview',font=('Verdana',10),cellpadding=19)
+style.configure('Treeview.Heading',font=('Verdana',10,'bold'),cellpadding=19,background=cl)
+style.map('Treeview',background=[('selected',cl)])
+
 style.configure('Treeview',rowheight=30)
+
 trv.pack(fill=tk.BOTH,expand=1)
 
 
@@ -260,7 +271,7 @@ def populate_view():
     connection.cursor.close()
     connection.conn.close()
 
-    
+
 #CLEAR ENTRIES
 def clear_entries():
     e1.delete(0,END)
@@ -270,13 +281,17 @@ def clear_entries():
     e5.delete(0,END)
     search_entry.delete(0,END)
     search_entry.insert(0,'C1')
+
+def clear_btn():
+    clear_entries()
+    populate_view()
  
  
  #UPDATE RECORDS   
 def update_data():
-    adm=e1.get()
-    first=e2.get()
-    last=e3.get()
+    adm=e1.get().upper()
+    first=e2.get().upper()
+    last=e3.get().upper()
     email=e4.get()
     phone=e5.get()
     connection.Database()
@@ -304,25 +319,48 @@ def homer():
 
 #GENERATING CERTICATE FROM TEMPLATE
 def generate_cert():
-    connection.Database()
-    connection.cursor.execute("SELECT * FROM students ORDER BY adm_no")
-    fetch=connection.cursor.fetchall()
-    for data in fetch:
-        space=' ' 
-        cert_num=(data[0])
-        file_n=(data[3])
-        names=(data[1]+space+data[2])
-        cert_no=f'A1l200{cert_num}'
-        template=cv2.imread('assets/certificate-template.jpg')
-        cv2.putText(template,names,(1201,953),cv2.FONT_HERSHEY_SIMPLEX,4,(233, 34, 103),4,cv2.LINE_AA)
-        cv2.putText(template,cert_no,(2697  ,2409),cv2.FONT_HERSHEY_SIMPLEX,3,(255,255,255),4,cv2.LINE_AA)      
-        cv2.imwrite(f'generated-certificate-data/images/{file_n}.jpg',template)
-        image=Image.open(f'generated-certificate-data/images/{file_n}.jpg')
-        cert_p=image.convert('RGB')
-        cert_p.save(f'generated-certificate-data/pdf/{file_n}.pdf')
-    connection.cursor.close()
-    connection.conn.close()
-  
+    if messagebox.askyesno('Confirm Prompt?','Do you want to BATCH process many certificates'):
+        connection.Database()
+        connection.cursor.execute("SELECT * FROM students ORDER BY adm_no")
+        fetch=connection.cursor.fetchall()
+      
+        for data in fetch:
+            space=' ' 
+            cert_num=(data[0])
+            file_n=(data[3])
+            names=(data[1]+space+data[2])
+            cert_no=f'A1l200{cert_num}'
+            template=cv2.imread('assets/certificate-template.jpg')
+            cv2.putText(template,names,(1201,953),cv2.FONT_HERSHEY_SIMPLEX,4,(233, 34, 103),4,cv2.LINE_AA)
+            cv2.putText(template,cert_no,(2697  ,2409),cv2.FONT_HERSHEY_SIMPLEX,3,(255,255,255),4,cv2.LINE_AA)      
+            cv2.imwrite(f'generated-certificate-data/images/{file_n}.jpg',template)
+            image=Image.open(f'generated-certificate-data/images/{file_n}.jpg')
+            cert_p=image.convert('RGB')
+            cert_p.save(f'generated-certificate-data/pdf/{file_n}.pdf')
+        connection.cursor.close()
+        connection.conn.close()
+    else:
+        search_it=search_entry.get()
+        connection.Database()
+        connection.cursor.execute("SELECT * FROM students WHERE adm_no LIKE '%"+search_it+"%'")
+        fetch=connection.cursor.fetchall()
+        
+        for data in fetch:
+            space=' ' 
+            cert_num=(data[0])
+            file_n=(data[3])
+            names=(data[1]+space+data[2])
+            cert_no=f'A1l200{cert_num}'
+            template=cv2.imread('assets/certificate-template.jpg')
+            cv2.putText(template,names,(1201,953),cv2.FONT_HERSHEY_SIMPLEX,4,(233, 34, 103),4,cv2.LINE_AA)
+            cv2.putText(template,cert_no,(2697  ,2409),cv2.FONT_HERSHEY_SIMPLEX,3,(255,255,255),4,cv2.LINE_AA)      
+            cv2.imwrite(f'generated-certificate-data/images/{file_n}.jpg',template)
+            image=Image.open(f'generated-certificate-data/images/{file_n}.jpg')
+            cert_p=image.convert('RGB')
+            cert_p.save(f'generated-certificate-data/pdf/{file_n}.pdf')
+        connection.cursor.close()
+        connection.conn.close()
+    
     messagebox.showinfo("","    Certificates Successfully Generated    ")
 #EMAILING CERTIFICATES TO STUDENTS
 def send_cert():
@@ -342,17 +380,31 @@ def send_cert():
         filename,
         file_location
     )
+ 
+
+def post_popup(event):
+    rowid=trv.identify_row(event.y) 
+    #trv.selection_set(rowid)  
+    #row_values=trv.item(rowid)['values']
+    row_values=trv.item(trv.focus())
+    print(row_values)
+    popup=tk.Menu(trv,tearoff=0,font=('Verdana',11))
+    popup.add_command(label='Edit/Update',accelerator='Ctrl+E')
+    popup.add_command(label='Delete',accelerator='Delete',command=delete_ent)
+    popup.add_separator()
+    popup.add_command(label='Edit/Update',accelerator='Ctrl+E')
+    popup.add_command(label='Delete',accelerator='Delete',command=delete_ent)
+    popup.post(event.x_app,event.y_app)
     
     
     
     
     
-    
-#ISERTING RECORDS
+#INSERTING RECORDS
 def insert_data():
-    adm=e1.get()
-    first=e2.get()
-    last=e3.get()
+    adm=e1.get().upper()
+    first=e2.get().upper()
+    last=e3.get().upper()
     email=e4.get()
     phone=e5.get()
     connection.Database()
@@ -369,12 +421,15 @@ def insert_data():
     connection.conn.commit()
     connection.cursor.close()
     connection.conn.close()
+    messagebox.showinfo("","     Student Successfully Registered   ")
     populate_view()
     clear_entries()
  
  
 #INSERTING DATA INTO TREE-VIEW   
 def get_row(event):
+    clear_entries()
+    search_entry.delete(0,END)
     rowid=trv.identify_row(event.y)
     item=trv.item(trv.focus())
     e1.insert(0,item['values'][0])
@@ -382,6 +437,7 @@ def get_row(event):
     e3.insert(0,item['values'][2])
     e4.insert(0,item['values'][3])
     e5.insert(0,item['values'][4])
+    search_entry.insert(0,item['values'][0])
 
 
 #DELETING ENTRIES
@@ -428,20 +484,23 @@ trv.column('#3',anchor='center',stretch=0)
 trv.column('#4',anchor='center',stretch=0)
 trv.column('#5',anchor='center',stretch=0)
 trv.bind('<Double 1>',get_row)
+trv.tag_bind('row','<Button-3>',lambda event:post_popup(event))
 
 
 #SCROLL BARS ON X & Y AXIS
 scrollbar_y.configure(command=trv.yview)
 scrollbar_x.configure(command=trv.xview)
+#trv.tag_configure('even',background=cl)
 
 
 #BUTTON CONFIGURATIONS
 search_b.configure(command=search)
 b1.configure(command=insert_data)
-b2.configure(command=clear_entries)
+b2.configure(command=clear_btn)
 b3.configure(command=update_data)
 b4.configure(command=delete_ent)
 home.configure(command=homer)
 cert_b.configure(command=generate_cert)
+populate_view()
 
 

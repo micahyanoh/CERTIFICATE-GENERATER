@@ -1,6 +1,7 @@
 from tkinter import *
 from PIL import ImageTk,Image
 from tkinter import messagebox
+import sqlite
 import ast
 
 w=Tk()
@@ -83,8 +84,7 @@ def signin():
             messagebox.showinfo("","     successfully logged in    ")
             w.destroy()
             import front
-            front.sqlite.create_student()
-            front.populate_view()
+            sqlite.create_student()
             front.app.mainloop()
             w.mainloop()
         else:
@@ -210,3 +210,4 @@ def signup():
     b2.place(x=210,y=250+63)
 
 signin() #default screen
+
