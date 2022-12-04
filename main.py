@@ -2,6 +2,7 @@
 from tkinter import *
 from tkinter import font
 from PIL import ImageTk, Image 
+import threading
 import time
 import folder
 
@@ -69,17 +70,21 @@ def splashscrn():
         l4=Label(w, image=image_a, border=0, relief=SUNKEN).place(x=240, y=145)
         w.update_idletasks()
         time.sleep(0.5)
-
-    folder.create_folders()
+        folder.create_folders()
 
     w.destroy()
     """CALLING INITIALIZING FUNCTIONS"""
     import log_in
     log_in.w.mainloop()
+
+def splash_thread():
+    threading.Thread(target=splashscrn).start()
+        
+
     
     
 def main():
-    splashscrn()
+    splash_thread()
     
 if __name__ == '__main__':
     main()

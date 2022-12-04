@@ -3,10 +3,238 @@ import tkinter as tk
 from tkinter import END, ttk,messagebox
 from pdf_mail import sendpdf
 from PIL import Image
+import threading
 import connection
 import cv2
 
 
+#GENERATING CERTICATE FROM TEMPLATE
+def generate_cert():
+    if messagebox.askyesno('Confirm Prompt?','Do you want to BATCH process many certificates'):
+        connection.Database()
+        connection.cursor.execute("SELECT * FROM students ORDER BY adm_no")
+        fetch=connection.cursor.fetchall()
+      
+        for data in fetch:
+            space=' ' 
+            cert_num=(data[0])
+            file_n=(data[3])
+            names=(data[1]+space+data[2])
+            cert_no=f'A1l200{cert_num}'
+            template=cv2.imread('assets/certificate-template.jpg')
+            cv2.putText(template,names,(1201,953),cv2.FONT_HERSHEY_SIMPLEX,4,(233, 34, 103),4,cv2.LINE_AA)
+            cv2.putText(template,cert_no,(2697  ,2409),cv2.FONT_HERSHEY_SIMPLEX,3,(255,255,255),4,cv2.LINE_AA)      
+            cv2.imwrite(f'generated-certificate-data/images/{file_n}.jpg',template)
+            image=Image.open(f'generated-certificate-data/images/{file_n}.jpg')
+            cert_p=image.convert('RGB')
+            cert_p.save(f'generated-certificate-data/pdf/{file_n}.pdf')  
+        connection.cursor.close()
+        connection.conn.close()
+    else:
+        search_it=search_entry.get()
+        connection.Database()
+        connection.cursor.execute("SELECT * FROM students WHERE adm_no LIKE '%"+search_it+"%'")
+        fetch=connection.cursor.fetchall()
+        
+        for data in fetch:
+            space=' ' 
+            cert_num=(data[0])
+            file_n=(data[3])
+            names=(data[1]+space+data[2])
+            cert_no=f'A1l200{cert_num}'
+            template=cv2.imread('assets/certificate-template.jpg')
+            cv2.putText(template,names,(1201,953),cv2.FONT_HERSHEY_SIMPLEX,4,(233, 34, 103),4,cv2.LINE_AA)
+            cv2.putText(template,cert_no,(2697  ,2409),cv2.FONT_HERSHEY_SIMPLEX,3,(255,255,255),4,cv2.LINE_AA)      
+            cv2.imwrite(f'generated-certificate-data/images/{file_n}.jpg',template)
+            image=Image.open(f'generated-certificate-data/images/{file_n}.jpg')
+            cert_p=image.convert('RGB')
+            cert_p.save(f'generated-certificate-data/pdf/{file_n}.pdf')
+        connection.cursor.close()
+        connection.conn.close()
+    
+    messagebox.showinfo("","    Certificates Successfully Generated    ")
+    
+
+def gen_thread():
+    threading.Thread(target=generate_cert).start()
+#button testing
+def printer():
+    print(e1.get())
+
+#testing function
+def enter_data():
+    adm=e1.get().upper()
+    first=e2.get().upper()
+    last=e3.get().upper()
+    email=e4.get().lower()
+    phone=e5.get()
+    
+#CLEAR ENTRIES
+def clear_entries():
+    e1.delete(0,END)
+    e2.delete(0,END)
+    e3.delete(0,END)
+    e4.delete(0,END)
+    e5.delete(0,END)
+    search_entry.delete(0,END)
+    search_entry.insert(0,'C1')
+
+def clear_btn():
+    clear_entries()
+    populate_view()
+
+ #UPDATE RECORDS   
+def update_data():
+    adm=e1.get().upper()
+    first=e2.get().upper()
+    last=e3.get().upper()
+    email=e4.get().lower()
+    phone=e5.get()
+    connection.Database()
+    if messagebox.askyesno('Confirm Delete?','Are you sure you want to update this student?'):
+        query="""
+        UPDATE students SET adm_no = ?,
+        first_name = ?,
+        last_name = ?,email = ?,phone = ? WHERE adm_no = ?"""
+        connection.cursor.execute(query,(adm,first,last,email,phone,adm))
+        connection.conn.commit()
+        populate_view()
+        clear_entries()
+    else:
+        clear_entries()
+        return True
+    
+#INSERTING RECORDS
+def insert_data():
+    adm=e1.get().upper()
+    first=e2.get().upper()
+    last=e3.get().upper()
+    email=e4.get().lower()
+    phone=e5.get()
+    connection.Database()
+    data_insert_query="""
+    INSERT OR REPLACE INTO students(
+        adm_no,
+        first_name,
+        last_name,
+        email,
+        phone
+        )VALUES(?,?,?,?,?)"""
+    data_insert_tuple=(adm,first,last,email,phone)
+    connection.cursor.execute(data_insert_query,data_insert_tuple)
+    connection.conn.commit()
+    connection.cursor.close()
+    connection.conn.close()
+    messagebox.showinfo("","     Student Successfully Registered   ")
+    populate_view()
+    clear_entries()
+
+    
+#SEARCHING RECORDS BY ADM NO.
+def search():
+    connection.Database()
+    search_it=search_entry.get()
+    query="SELECT * FROM students WHERE adm_no LIKE '%"+search_it+"%'" 
+    connection.cursor.execute(query)
+    rows=connection.cursor.fetchall()
+    trv.delete(*trv.get_children())
+    if rows ==[]:
+        populate_view()
+        clear_entries()
+    else:
+        for data in rows:
+            trv.insert('','end',values=(data[0],data[1],data[2],data[3],data[4]))
+            clear_entries()
+
+
+
+#DISPLAYING DATA
+def populate_view():
+    trv.tag_configure('gray',background='lightgray')
+    trv.tag_configure('normal',background='white')
+    my_tag='normal'#default tag
+
+    trv.delete(*trv.get_children())
+    connection.Database()
+    connection.cursor.execute("SELECT * FROM students ORDER BY adm_no")
+    fetch=connection.cursor.fetchall()
+    for data in fetch:
+        my_tag='gray' if my_tag =='normal' else 'normal'
+        trv.insert('','end',values=(data[0],data[1],data[2],data[3],data[4]),tags=my_tag)
+    connection.cursor.close()
+    connection.conn.close()
+
+#DELETING ENTRIES
+def delete_ent():
+    connection.Database()
+    delete_id=e1.get()
+    if messagebox.askyesno('Confirm Delete?','Are you sure you want to delete this student?'):
+        connection.cursor.execute("""DELETE from students WHERE adm_no=?""",(delete_id,))
+        connection.conn.commit()
+        populate_view()
+        clear_entries()
+    else:
+        clear_entries()
+        return True
+
+#EXIT FUNCTION   
+def homer(): 
+    if messagebox.askyesno('Confirm Exit?','Are you sure you want to Close this App?'):
+        app.destroy()
+    else:
+        return True      
+
+ 
+#INSERTING DATA INTO TREE-VIEW   
+def get_row(event):
+    clear_entries()
+    search_entry.delete(0,END)
+    rowid=trv.identify_row(event.y)
+    item=trv.item(trv.focus())
+    e1.insert(0,item['values'][0])
+    e2.insert(0,item['values'][1])
+    e3.insert(0,item['values'][2])
+    e4.insert(0,item['values'][3])
+    e5.insert(0,item['values'][4])
+    search_entry.insert(0,item['values'][0])
+
+
+def post_popup(event):
+    rowid=trv.identify_row(event.y) 
+    #trv.selection_set(rowid)  
+    #row_values=trv.item(rowid)['values']
+    row_values=trv.item(trv.focus())
+    print(row_values)
+    popup=tk.Menu(trv,tearoff=0,font=('Verdana',11))
+    popup.add_command(label='Edit/Update',accelerator='Ctrl+E')
+    popup.add_command(label='Delete',accelerator='Delete',command=delete_ent)
+    popup.add_separator()
+    popup.add_command(label='Edit/Update',accelerator='Ctrl+E')
+    popup.add_command(label='Delete',accelerator='Delete',command=delete_ent)
+    popup.post(event.x_app,event.y_app)
+    
+    
+#EMAILING CERTIFICATES TO STUDENTS
+def send_cert():
+    sender=input()
+    receiver=input()
+    email_password=input()
+    subject=input()
+    body=input()
+    filename=input()
+    file_location=input()
+    message=sendpdf(
+        sender,
+        receiver,
+        email_password,
+        subject,
+        body,
+        filename,
+        file_location
+    )
+ 
+
+     
 """INITIALIZING APPLICATION"""
 app=tk.Tk()
 app.geometry('1025x500')
@@ -22,11 +250,6 @@ app.configure(background=cl)#'#2f935a')
 #app.configure(background= 'white')
 app.title('STUDENT MANAGEMENT SYSTEM')
 app.state('zoomed')#maximizing the window to screen size
-
-
-#button testing
-def printer():
-    print(e1.get())
 
 
 '''frame one'''
@@ -190,17 +413,20 @@ cert_b=tk.Button(
     first_frame,
     text='GENERATE',
     width=10,
-    background='#D9D9D9'
+    background='#D9D9D9',
+    cursor='hand2',
     )
+    
 cert_b.grid(column=1,row=12)
 
 home=tk.Button(
     first_frame,
     text='EXIT',
     width=10,
-    background='#D9D9D9'
+    background='#D9D9D9',
+    cursor='hand2'
     )
-home.grid(column=0,row=12)
+home.grid(column=0,row=12,)
 
 
 '''frame two'''
@@ -218,15 +444,6 @@ scrollbar_x=ttk.Scrollbar(second_frame,orient=tk.HORIZONTAL)
 scrollbar_x.pack(side=tk.BOTTOM,fill=tk.X)
 scrollbar_y=ttk.Scrollbar(second_frame,orient=tk.VERTICAL)
 scrollbar_y.pack(side=tk.RIGHT,fill=tk.Y)
-
-
-#testing function
-def enter_data():
-    adm=e1.get().upper()
-    first=e2.get().upper()
-    last=e3.get().upper()
-    email=e4.get()
-    phone=e5.get()
 
 
 """TREE-VIEW TO DISPLAY DATA ON SECOND FRAME"""
@@ -255,222 +472,6 @@ style.configure('Treeview',rowheight=30)
 trv.pack(fill=tk.BOTH,expand=1)
 
 
-#DISPLAYING DATA
-def populate_view():
-    trv.tag_configure('gray',background='lightgray')
-    trv.tag_configure('normal',background='white')
-    my_tag='normal'#default tag
-
-    trv.delete(*trv.get_children())
-    connection.Database()
-    connection.cursor.execute("SELECT * FROM students ORDER BY adm_no")
-    fetch=connection.cursor.fetchall()
-    for data in fetch:
-        my_tag='gray' if my_tag =='normal' else 'normal'
-        trv.insert('','end',values=(data[0],data[1],data[2],data[3],data[4]),tags=my_tag)
-    connection.cursor.close()
-    connection.conn.close()
-
-
-#CLEAR ENTRIES
-def clear_entries():
-    e1.delete(0,END)
-    e2.delete(0,END)
-    e3.delete(0,END)
-    e4.delete(0,END)
-    e5.delete(0,END)
-    search_entry.delete(0,END)
-    search_entry.insert(0,'C1')
-
-def clear_btn():
-    clear_entries()
-    populate_view()
- 
- 
- #UPDATE RECORDS   
-def update_data():
-    adm=e1.get().upper()
-    first=e2.get().upper()
-    last=e3.get().upper()
-    email=e4.get()
-    phone=e5.get()
-    connection.Database()
-    if messagebox.askyesno('Confirm Delete?','Are you sure you want to update this student?'):
-        query="""
-        UPDATE students SET adm_no = ?,
-        first_name = ?,
-        last_name = ?,email = ?,phone = ? WHERE adm_no = ?"""
-        connection.cursor.execute(query,(adm,first,last,email,phone,adm))
-        connection.conn.commit()
-        populate_view()
-        clear_entries()
-    else:
-        clear_entries()
-        return True
-    
-    
-#EXIT FUNCTION   
-def homer(): 
-    if messagebox.askyesno('Confirm Exit?','Are you sure you want to Close this App?'):
-        app.destroy()
-    else:
-        return True      
-    
-
-#GENERATING CERTICATE FROM TEMPLATE
-def generate_cert():
-    if messagebox.askyesno('Confirm Prompt?','Do you want to BATCH process many certificates'):
-        connection.Database()
-        connection.cursor.execute("SELECT * FROM students ORDER BY adm_no")
-        fetch=connection.cursor.fetchall()
-      
-        for data in fetch:
-            space=' ' 
-            cert_num=(data[0])
-            file_n=(data[3])
-            names=(data[1]+space+data[2])
-            cert_no=f'A1l200{cert_num}'
-            template=cv2.imread('assets/certificate-template.jpg')
-            cv2.putText(template,names,(1201,953),cv2.FONT_HERSHEY_SIMPLEX,4,(233, 34, 103),4,cv2.LINE_AA)
-            cv2.putText(template,cert_no,(2697  ,2409),cv2.FONT_HERSHEY_SIMPLEX,3,(255,255,255),4,cv2.LINE_AA)      
-            cv2.imwrite(f'generated-certificate-data/images/{file_n}.jpg',template)
-            image=Image.open(f'generated-certificate-data/images/{file_n}.jpg')
-            cert_p=image.convert('RGB')
-            cert_p.save(f'generated-certificate-data/pdf/{file_n}.pdf')
-        connection.cursor.close()
-        connection.conn.close()
-    else:
-        search_it=search_entry.get()
-        connection.Database()
-        connection.cursor.execute("SELECT * FROM students WHERE adm_no LIKE '%"+search_it+"%'")
-        fetch=connection.cursor.fetchall()
-        
-        for data in fetch:
-            space=' ' 
-            cert_num=(data[0])
-            file_n=(data[3])
-            names=(data[1]+space+data[2])
-            cert_no=f'A1l200{cert_num}'
-            template=cv2.imread('assets/certificate-template.jpg')
-            cv2.putText(template,names,(1201,953),cv2.FONT_HERSHEY_SIMPLEX,4,(233, 34, 103),4,cv2.LINE_AA)
-            cv2.putText(template,cert_no,(2697  ,2409),cv2.FONT_HERSHEY_SIMPLEX,3,(255,255,255),4,cv2.LINE_AA)      
-            cv2.imwrite(f'generated-certificate-data/images/{file_n}.jpg',template)
-            image=Image.open(f'generated-certificate-data/images/{file_n}.jpg')
-            cert_p=image.convert('RGB')
-            cert_p.save(f'generated-certificate-data/pdf/{file_n}.pdf')
-        connection.cursor.close()
-        connection.conn.close()
-    
-    messagebox.showinfo("","    Certificates Successfully Generated    ")
-#EMAILING CERTIFICATES TO STUDENTS
-def send_cert():
-    sender=input()
-    receiver=input()
-    email_password=input()
-    subject=input()
-    body=input()
-    filename=input()
-    file_location=input()
-    message=sendpdf(
-        sender,
-        receiver,
-        email_password,
-        subject,
-        body,
-        filename,
-        file_location
-    )
- 
-
-def post_popup(event):
-    rowid=trv.identify_row(event.y) 
-    #trv.selection_set(rowid)  
-    #row_values=trv.item(rowid)['values']
-    row_values=trv.item(trv.focus())
-    print(row_values)
-    popup=tk.Menu(trv,tearoff=0,font=('Verdana',11))
-    popup.add_command(label='Edit/Update',accelerator='Ctrl+E')
-    popup.add_command(label='Delete',accelerator='Delete',command=delete_ent)
-    popup.add_separator()
-    popup.add_command(label='Edit/Update',accelerator='Ctrl+E')
-    popup.add_command(label='Delete',accelerator='Delete',command=delete_ent)
-    popup.post(event.x_app,event.y_app)
-    
-    
-    
-    
-    
-#INSERTING RECORDS
-def insert_data():
-    adm=e1.get().upper()
-    first=e2.get().upper()
-    last=e3.get().upper()
-    email=e4.get()
-    phone=e5.get()
-    connection.Database()
-    data_insert_query="""
-    INSERT OR REPLACE INTO students(
-        adm_no,
-        first_name,
-        last_name,
-        email,
-        phone
-        )VALUES(?,?,?,?,?)"""
-    data_insert_tuple=(adm,first,last,email,phone)
-    connection.cursor.execute(data_insert_query,data_insert_tuple)
-    connection.conn.commit()
-    connection.cursor.close()
-    connection.conn.close()
-    messagebox.showinfo("","     Student Successfully Registered   ")
-    populate_view()
-    clear_entries()
- 
- 
-#INSERTING DATA INTO TREE-VIEW   
-def get_row(event):
-    clear_entries()
-    search_entry.delete(0,END)
-    rowid=trv.identify_row(event.y)
-    item=trv.item(trv.focus())
-    e1.insert(0,item['values'][0])
-    e2.insert(0,item['values'][1])
-    e3.insert(0,item['values'][2])
-    e4.insert(0,item['values'][3])
-    e5.insert(0,item['values'][4])
-    search_entry.insert(0,item['values'][0])
-
-
-#DELETING ENTRIES
-def delete_ent():
-    connection.Database()
-    delete_id=e1.get()
-    if messagebox.askyesno('Confirm Delete?','Are you sure you want to delete this student?'):
-        connection.cursor.execute("""DELETE from students WHERE adm_no=?""",(delete_id,))
-        connection.conn.commit()
-        populate_view()
-        clear_entries()
-    else:
-        clear_entries()
-        return True
-    
-    
-#SEARCHING RECORDS BY ADM NO.
-def search():
-    connection.Database()
-    search_it=search_entry.get()
-    query="SELECT * FROM students WHERE adm_no LIKE '%"+search_it+"%'" 
-    connection.cursor.execute(query)
-    rows=connection.cursor.fetchall()
-    trv.delete(*trv.get_children())
-    if rows ==[]:
-        populate_view()
-        clear_entries()
-    else:
-        for data in rows:
-            trv.insert('','end',values=(data[0],data[1],data[2],data[3],data[4]))
-            clear_entries()
-   
-    
 #TREE-VIEW CONFIGURATION
 trv.heading('#1',text='ADM NO',anchor='center')
 trv.heading('#2',text='FIRST NAME',anchor='center')
@@ -500,7 +501,6 @@ b2.configure(command=clear_btn)
 b3.configure(command=update_data)
 b4.configure(command=delete_ent)
 home.configure(command=homer)
-cert_b.configure(command=generate_cert)
+cert_b.configure(command=gen_thread)
 populate_view()
-
-
+app.mainloop()
